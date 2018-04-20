@@ -1,0 +1,64 @@
+---
+
+- name: install nginx ppa source
+  apt_repository:
+    repo: ppa:nginx/stable
+  tags:
+    - nginx
+
+- name: update repositories cache and install nginx
+  apt:
+    name: nginx
+    update_cache: yes
+  tags:
+    - nginx
+
+- name: start and enable nginx
+  service:
+    name: nginx
+    enabled: yes
+    state: started
+
+- name: remove default site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart nginx
+  tags:
+    - nginx
+
+- name: install nginx files and snippets
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0664
+  notify: restart nginx
+  with_items:
+     - { src: nginx.conf.j2, dest: /etc/nginx/nginx.conf }
+     - { src: magento-vhost.conf.j2, dest: /etc/nginx/sites-available/www.conf }
+     - { src: magento-snippet.conf.j2, dest: /etc/nginx/snippets/magento.conf }
+     - { src: realip-snippet.conf.j2, dest: /etc/nginx/snippets/realip.conf }
+  tags:
+    - nginx
+
+- name: enable site config with symlink
+  file:
+    src: /etc/nginx/sites-available/www.conf
+    dest: /etc/nginx/sites-enabled/www.conf
+    force: yes
+    state: link
+  notify: restart nginx
+  tags:
+    - nginx
+
+- name: copy h5bp snippets
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/nginx/snippets/"
+  with_items:
+    - directive-only
+    - location
+  notify: restart nginx
+  tags:
+    - nginx
+
