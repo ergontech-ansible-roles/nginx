@@ -10,6 +10,7 @@ Role Variables
 
 nginx_sendfile: "on"
 nginx_max_body_size: "10M"
+nginx_listen_port: 80
 
 fastcgi_buffers: "8 16k"
 fastcgi_buffer_size: "32k"
