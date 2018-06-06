@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+
+# Header providing internal IP to allow visibility into which server is handling a request in a load balanced environment
+{% if ansible_eth0 is defined %}
+add_header "X-Whom" "{{ ansible_eth0.ipv4.address }}"
+{% elif ansible_enp0s8 is defined %}
+add_header "X-Whom" "{{ ansible_enp0s8.ipv4.address }}"
+{% else %}
+add_header "X-Whom" "{{ ansible_default_ipv4.address }}"
+{% endif %}

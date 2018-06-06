@@ -1,5 +1,11 @@
 # {{ ansible_managed }}
 
+fastcgi_buffers {{ fastcgi_buffers }};
+fastcgi_buffer_size {{ fastcgi_buffer_size }};
+fastcgi_connect_timeout {{ fastcgi_connect_timeout }};
+fastcgi_send_timeout {{ fastcgi_send_timeout }};
+fastcgi_read_timeout {{ fastcgi_read_timeout }};
+
 # regex to split $uri to $fastcgi_script_name and $fastcgi_path
 fastcgi_split_path_info ^(.+\.php)(/.+)$;
 

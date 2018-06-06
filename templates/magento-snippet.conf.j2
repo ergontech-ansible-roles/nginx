@@ -1,21 +1,24 @@
 # {{ ansible_managed }}
 
-expires -1; ## Disable client-side cache
-
 location / {
     index index.php index.html; ## Allow a static html file to be shown first
     try_files $uri $uri/ @handler; ## If missing pass the URI to Magento's front handler
 }
 
 ## These locations would be hidden by .htaccess normally
-location /app/                        { deny all; }
-location /includes/                   { deny all; }
-location /lib/                        { deny all; }
-location /media/downloadable/         { deny all; }
-location /media/wysiwyg/urapidflow/   { deny all; }
-location /pkginfo/                    { deny all; }
-location /report/config.xml           { deny all; }
-location /var/                        { deny all; }
+location ~ ^/app/                       { deny all; }
+location ~ ^/dev/                       { deny all; }
+location ~ ^/downloader/                { deny all; }
+location ~ ^/includes/                  { deny all; }
+location ~ ^/lib/                       { deny all; }
+location ~ ^/media/downloadable/        { deny all; }
+# NOTE: disabling urapidflow for now
+#location ~ ^/media/wysiwyg/urapidflow/  { deny all; }
+location ~ ^/pkginfo/                   { deny all; }
+location ~ ^/report/config.xml          { deny all; }
+location ~ ^/rss/                       { deny all; }
+location ~ ^/index.php/?rss/            { deny all; }
+location ~ ^/var/                       { deny all; }
 
 location /var/export/ { ## Allow admins only to view export folder
     auth_basic           "Restricted"; ## Message shown in login window

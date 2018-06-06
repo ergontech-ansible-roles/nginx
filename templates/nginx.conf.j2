@@ -67,7 +67,9 @@ http {
   # this option should be disabled as ZFS's ARC caches
   # frequently used files in RAM by default.
   # Default: off
-  sendfile        on;
+  sendfile        {{ nginx_sendfile }};
+
+  client_max_body_size {{ nginx_max_body_size }};
 
   # Don't send out partial frames; this increases throughput
   # since TCP frames are filled up before being sent out.

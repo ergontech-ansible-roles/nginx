@@ -38,6 +38,8 @@
      - { src: magento-vhost.conf.j2, dest: /etc/nginx/sites-available/www.conf }
      - { src: magento-snippet.conf.j2, dest: /etc/nginx/snippets/magento.conf }
      - { src: realip-snippet.conf.j2, dest: /etc/nginx/snippets/realip.conf }
+     - { src: fpm-snippet.conf.j2, dest: /etc/nginx/snippets/fastcgi-php.conf }
+     - { src: x-whom.conf.j2, dest: /etc/nginx/snippets/x-whom.conf }
   tags:
     - nginx
 
