@@ -1,25 +1,29 @@
 ---
 
-- name: install nginx ppa source
+- name: Install nginx ppa source
+  become: yes
   apt_repository:
     repo: ppa:nginx/stable
   tags:
     - nginx
 
-- name: update repositories cache and install nginx
+- name: Update repositories cache and install nginx
+  become: yes
   apt:
     name: nginx
     update_cache: yes
   tags:
     - nginx
 
-- name: start and enable nginx
+- name: Start and enable nginx
+  become: yes
   service:
     name: nginx
     enabled: yes
     state: started
 
-- name: remove default site
+- name: Remove default site
+  become: yes
   file:
     path: /etc/nginx/sites-enabled/default
     state: absent
@@ -27,7 +31,8 @@
   tags:
     - nginx
 
-- name: install nginx files and snippets
+- name: Install nginx files and snippets
+  become: yes
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -43,7 +48,8 @@
   tags:
     - nginx
 
-- name: enable site config with symlink
+- name: Enable site config with symlink
+  become: yes
   file:
     src: /etc/nginx/sites-available/www.conf
     dest: /etc/nginx/sites-enabled/www.conf
@@ -53,7 +59,8 @@
   tags:
     - nginx
 
-- name: copy h5bp snippets
+- name: Copy h5bp snippets
+  become: yes
   copy:
     src: "{{ item }}"
     dest: "/etc/nginx/snippets/"
