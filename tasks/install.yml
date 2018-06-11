@@ -1,0 +1,25 @@
+---
+
+- name: Install nginx ppa source
+  become: yes
+  apt_repository:
+    repo: ppa:nginx/stable
+  tags:
+    - nginx
+
+- name: Update repositories cache and install nginx
+  become: yes
+  apt:
+    name: nginx
+    update_cache: yes
+  tags:
+    - nginx
+
+- name: Remove default site
+  become: yes
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart nginx
+  tags:
+    - nginx
