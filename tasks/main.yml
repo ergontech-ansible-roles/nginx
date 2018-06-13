@@ -3,9 +3,11 @@
 - include_tasks: install.yml
 - include_tasks: configure.yml
 
+# NOTE: using 'systemd' instead of 'service' here as nginx package also includes
+# initd startup files, we only want to target systemd
 - name: Start and enable nginx
   become: yes
-  service:
+  systemd:
     name: nginx
-    enabled: yes
     state: started
+    enabled: yes
