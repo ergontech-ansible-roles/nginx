@@ -1,0 +1,63 @@
+---
+
+- name: Download custom modules source tar
+  become: yes
+  get_url:
+    url: "{{ item.source }}"
+    dest: "/opt/{{ item.name }}.tar.gz"
+  loop: "{{ nginx_custom_modules }}"
+
+- name: Extract custom modules
+  become: yes
+  unarchive:
+    src: "/opt/{{ item.name }}.tar.gz"
+    dest: /opt
+    remote_src: yes
+  loop: "{{ nginx_custom_modules }}"
+
+- name: Collect current nginx binary version
+  shell: "nginx -v 2>&1 | grep -o '[0-9.]*$'"
+  register: nginx_version
+  failed_when: not nginx_version.stdout
+
+- name: Ensure tmp location exists for download
+  file:
+    path: /tmp/nginx
+    state: directory
+
+- name: Download nginx source tar
+  get_url:
+    url: "http://nginx.org/download/nginx-{{ nginx_version.stdout }}.tar.gz"
+    dest: /tmp/nginx
+
+- name: Extract nginx source tar
+  unarchive:
+    src: "/tmp/nginx/nginx-{{ nginx_version.stdout }}.tar.gz"
+    dest: /tmp/nginx
+    remote_src: yes
+
+- name: Download build essential packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+  loop:
+    - build-essential
+    - libpcre3-dev
+    - zlib1g-dev
+    - libssl-dev
+    - libxslt1-dev
+
+- name: Configure nginx with custom modules
+  shell: "./configure {% for item in nginx_custom_modules %} --add-dynamic-module=/opt/{{item.pkgname}}/ {% endfor %}"
+  args:
+    chdir: "/tmp/nginx/nginx-{{ nginx_version.stdout }}"
+
+- name: Build nginx from source
+  become: yes
+  shell: "{{ item }}"
+  args:
+    chdir: "/tmp/nginx/nginx-{{ nginx_version.stdout }}"
+  loop:
+  - "make"
+  - "make install"
+
