@@ -1,14 +1,16 @@
 ---
 
-#- include_tasks: install.yml
-#  tags:
-#    - nginx
-#
-#- include_tasks: configure.yml
-#  tags:
-#    - nginx
+- include_tasks: install.yml
+  tags:
+    - nginx
+
+- include_tasks: configure.yml
+  tags:
+    - nginx
+    - nginx-configure
 
 - include_tasks: custom.yml
   when: nginx_custom_modules
   tags:
     - nginx
+    - nginx-source
