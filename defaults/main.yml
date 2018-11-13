@@ -4,11 +4,7 @@ nginx_sendfile: "on"
 nginx_max_body_size: "10M"
 nginx_listen_port: 80
 
-nginx_custom_modules:
-  - name: nginx_http_geoip2_3.2
-    source: https://github.com/leev/ngx_http_geoip2_module/archive/3.2.tar.gz
-    pkgname: ngx_http_geoip2_module-3.2
-    file: ngx_http_geoip2_module.so
+nginx_custom_modules: false
 
 nginx_build_dependencies:
   - build-essential
