@@ -5,7 +5,7 @@ nginx_max_body_size: "10M"
 nginx_listen_port: 80
 
 nginx_custom_modules: false
-
+nginx_source_path: /opt/nginx
 nginx_build_dependencies:
   - build-essential
   - libpcre3-dev

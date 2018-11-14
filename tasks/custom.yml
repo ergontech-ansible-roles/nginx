@@ -21,20 +21,23 @@
   failed_when: not nginx_version.stdout
   changed_when: false
 
-- name: Ensure tmp location exists for download
+- name: Ensure opt location exists for download
+  become: yes
   file:
-    path: /tmp/nginx
+    path: "{{ nginx_source_path }}"
     state: directory
 
 - name: Download nginx source tar
+  become: yes
   get_url:
     url: "http://nginx.org/download/nginx-{{ nginx_version.stdout }}.tar.gz"
-    dest: /tmp/nginx
+    dest: "{{ nginx_source_path }}"
 
 - name: Extract nginx source tar
+  become: yes
   unarchive:
-    src: "/tmp/nginx/nginx-{{ nginx_version.stdout }}.tar.gz"
-    dest: /tmp/nginx
+    src: "{{ nginx_source_path }}/nginx-{{ nginx_version.stdout }}.tar.gz"
+    dest: "{{ nginx_source_path }}"
     remote_src: yes
 
 - name: Ensure build essential packages are present
@@ -43,16 +46,17 @@
     name: "{{ nginx_build_dependencies }}"
 
 - name: Configure nginx with custom modules
+  become: yes
   shell: "./configure {% for item in nginx_custom_modules %} --add-dynamic-module=/opt/{{item.pkgname}}/ {% endfor %} {% for item in nginx_configure_options %} {{ item }} {% endfor %}"
   args:
-    chdir: "/tmp/nginx/nginx-{{ nginx_version.stdout }}"
+    chdir: "{{ nginx_source_path }}/nginx-{{ nginx_version.stdout }}"
   changed_when: false
 
 - name: Build nginx from source
   become: yes
   shell: "{{ item }}"
   args:
-    chdir: "/tmp/nginx/nginx-{{ nginx_version.stdout }}"
+    chdir: "{{ nginx_source_path }}/nginx-{{ nginx_version.stdout }}"
   changed_when: false
   loop:
   - "make"
