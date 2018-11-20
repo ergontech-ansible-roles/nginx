@@ -1,12 +1,19 @@
 Nginx Role
 =========
 
+Installs nginx via `apt`. Option to install nginx from source when nginx_custom_modules is set.
+(This role will not install custom module dependencies)
 
 Role Variables
 --------------
 
 ```
-# Any Vars?
+# suggested custom module use
+nginx_custom_modules:
+  - name: nginx_http_geoip2_3.2
+    source: https://github.com/leev/ngx_http_geoip2_module/archive/3.2.tar.gz
+    pkgname: ngx_http_geoip2_module-3.2
+    file: ngx_http_geoip2_module.so
 
 nginx_sendfile: "on"
 nginx_max_body_size: "10M"
@@ -17,8 +24,6 @@ fastcgi_buffer_size: "32k"
 fastcgi_connect_timeout: 300
 fastcgi_send_timeout: 300
 fastcgi_read_timeout: 300
-
-
 ```
 
 ----------------

@@ -4,6 +4,12 @@ user www-data www-data;
 worker_processes auto;
 worker_rlimit_nofile 8192;
 
+{% if nginx_custom_modules %}
+{% for module in nginx_custom_modules %}
+load_module modules/{{ module.file }};
+{% endfor %}
+{% endif %}
+
 events {
     # Should be < worker_rlimit_nofile.
     # Default: 512

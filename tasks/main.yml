@@ -3,17 +3,14 @@
 - include_tasks: install.yml
   tags:
     - nginx
+
 - include_tasks: configure.yml
   tags:
     - nginx
+    - nginx-configure
 
-# NOTE: using 'systemd' instead of 'service' here as nginx package also includes
-# initd startup files, we only want to target systemd
-- name: Start and enable nginx
-  become: yes
-  systemd:
-    name: nginx.service
-    state: started
-    enabled: yes
+- include_tasks: custom.yml
+  when: nginx_custom_modules
   tags:
     - nginx
+    - nginx-source

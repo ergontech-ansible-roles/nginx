@@ -5,6 +5,6 @@
 add_header "X-Whom" "{{ ansible_eth0.ipv4.address }}";
 {% elif ansible_enp0s8 is defined %}
 add_header "X-Whom" "{{ ansible_enp0s8.ipv4.address }}";
-{% else %}
+{% elif ansible_default_ipv4 is defined %}
 add_header "X-Whom" "{{ ansible_default_ipv4.address }}";
 {% endif %}

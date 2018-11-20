@@ -12,8 +12,6 @@
      - { src: realip-snippet.conf.j2, dest: /etc/nginx/snippets/realip.conf }
      - { src: fpm-snippet.conf.j2, dest: /etc/nginx/snippets/fastcgi-php.conf }
      - { src: x-whom.conf.j2, dest: /etc/nginx/snippets/x-whom.conf }
-  tags:
-    - nginx
 
 - name: Enable site config with symlink
   become: yes
@@ -23,8 +21,6 @@
     force: yes
     state: link
   notify: restart nginx
-  tags:
-    - nginx
 
 - name: Copy h5bp snippets
   become: yes
@@ -35,5 +31,3 @@
     - directive-only
     - location
   notify: restart nginx
-  tags:
-    - nginx
