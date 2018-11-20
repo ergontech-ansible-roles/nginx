@@ -6,7 +6,9 @@
     url: "{{ item.source }}"
     dest: "/opt/{{ item.name }}.tar.gz"
   loop: "{{ nginx_custom_modules }}"
-  tags: nginx-source
+  tags:
+    - nginx-source
+    - nginx
 
 - name: Extract custom modules
   become: yes
@@ -15,28 +17,36 @@
     dest: /opt
     remote_src: yes
   loop: "{{ nginx_custom_modules }}"
-  tags: nginx-source
+  tags:
+    - nginx-source
+    - nginx
 
 - name: Collect current nginx binary version
   shell: "nginx -v 2>&1 | grep -o '[0-9.]*$'"
   register: nginx_version
   failed_when: not nginx_version.stdout
   changed_when: false
-  tags: nginx-source
+  tags:
+    - nginx-source
+    - nginx
 
 - name: Ensure opt location exists for download
   become: yes
   file:
     path: "{{ nginx_source_path }}"
     state: directory
-  tags: nginx-source
+  tags:
+    - nginx-source
+    - nginx
 
 - name: Download nginx source tar
   become: yes
   get_url:
     url: "http://nginx.org/download/nginx-{{ nginx_version.stdout }}.tar.gz"
     dest: "{{ nginx_source_path }}"
-  tags: nginx-source
+  tags:
+    - nginx-source
+    - nginx
 
 - name: Extract nginx source tar
   become: yes
@@ -44,13 +54,17 @@
     src: "{{ nginx_source_path }}/nginx-{{ nginx_version.stdout }}.tar.gz"
     dest: "{{ nginx_source_path }}"
     remote_src: yes
-  tags: nginx-source
+  tags:
+    - nginx-source
+    - nginx
 
 - name: Ensure build essential packages are present
   become: yes
   apt:
     name: "{{ nginx_build_dependencies }}"
-  tags: nginx-source
+  tags:
+    - nginx-source
+    - nginx
 
 - name: Configure nginx with custom modules
   become: yes
@@ -58,7 +72,9 @@
   args:
     chdir: "{{ nginx_source_path }}/nginx-{{ nginx_version.stdout }}"
   changed_when: false
-  tags: nginx-source
+  tags:
+    - nginx-source
+    - nginx
 
 - name: Build nginx from source
   become: yes
@@ -69,7 +85,9 @@
   loop:
     - "make"
     - "make install"
-  tags: nginx-source
+  tags:
+    - nginx-source
+    - nginx
 
 - name: Update nginx binary
   become: yes
@@ -79,3 +97,6 @@
     remote_src: yes
   changed_when: false
   notify: restart nginx
+  tags:
+    - nginx-source
+    - nginx
