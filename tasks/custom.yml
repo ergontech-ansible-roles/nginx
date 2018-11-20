@@ -6,6 +6,7 @@
     url: "{{ item.source }}"
     dest: "/opt/{{ item.name }}.tar.gz"
   loop: "{{ nginx_custom_modules }}"
+  tags: nginx-source
 
 - name: Extract custom modules
   become: yes
@@ -14,24 +15,28 @@
     dest: /opt
     remote_src: yes
   loop: "{{ nginx_custom_modules }}"
+  tags: nginx-source
 
 - name: Collect current nginx binary version
   shell: "nginx -v 2>&1 | grep -o '[0-9.]*$'"
   register: nginx_version
   failed_when: not nginx_version.stdout
   changed_when: false
+  tags: nginx-source
 
 - name: Ensure opt location exists for download
   become: yes
   file:
     path: "{{ nginx_source_path }}"
     state: directory
+  tags: nginx-source
 
 - name: Download nginx source tar
   become: yes
   get_url:
     url: "http://nginx.org/download/nginx-{{ nginx_version.stdout }}.tar.gz"
     dest: "{{ nginx_source_path }}"
+  tags: nginx-source
 
 - name: Extract nginx source tar
   become: yes
@@ -39,11 +44,13 @@
     src: "{{ nginx_source_path }}/nginx-{{ nginx_version.stdout }}.tar.gz"
     dest: "{{ nginx_source_path }}"
     remote_src: yes
+  tags: nginx-source
 
 - name: Ensure build essential packages are present
   become: yes
   apt:
     name: "{{ nginx_build_dependencies }}"
+  tags: nginx-source
 
 - name: Configure nginx with custom modules
   become: yes
@@ -51,6 +58,7 @@
   args:
     chdir: "{{ nginx_source_path }}/nginx-{{ nginx_version.stdout }}"
   changed_when: false
+  tags: nginx-source
 
 - name: Build nginx from source
   become: yes
@@ -59,8 +67,9 @@
     chdir: "{{ nginx_source_path }}/nginx-{{ nginx_version.stdout }}"
   changed_when: false
   loop:
-  - "make"
-  - "make install"
+    - "make"
+    - "make install"
+  tags: nginx-source
 
 - name: Update nginx binary
   become: yes
