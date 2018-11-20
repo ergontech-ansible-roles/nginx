@@ -6,6 +6,9 @@
 
 - include_tasks: custom.yml
   when: nginx_custom_modules
+  tags:
+    - nginx-source
+    - nginx
 
 - import_tasks: configure.yml
   tags:
