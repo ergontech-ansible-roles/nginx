@@ -8,6 +8,10 @@ Role Variables
 --------------
 
 ```
+nginx_custom_settings:
+  server_names_hash_bucket_size: 64
+  map_hash_bucket_size: 64
+  
 # suggested custom module use
 nginx_custom_modules:
   - name: nginx_http_geoip2_3.2

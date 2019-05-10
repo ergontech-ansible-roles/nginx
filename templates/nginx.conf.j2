@@ -1,3 +1,4 @@
+#jinja2: lstrip_blocks: True
 # {{ ansible_managed }}
 
 user www-data www-data;
@@ -5,9 +6,9 @@ worker_processes auto;
 worker_rlimit_nofile 8192;
 
 {% if nginx_custom_modules %}
-{% for module in nginx_custom_modules %}
+    {% for module in nginx_custom_modules %}
 load_module modules/{{ module.file }};
-{% endfor %}
+    {% endfor %}
 {% endif %}
 
 events {
@@ -24,6 +25,12 @@ error_log /var/log/nginx/error.log warn;
 pid /var/run/nginx.pid;
 
 http {
+
+    {% if nginx_custom_settings is defined %}
+        {% for config, value in nginx_custom_settings.items() %}
+    {{ config }} {{ value }};
+        {% endfor %}
+    {% endif %}
 
     # Hide nginx version information.
     # Default: on
