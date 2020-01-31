@@ -1,5 +1,8 @@
 # {{ ansible_managed }}
 
+fastcgi_param  PHP_FLAG  "session.auto_start=off \n suhosin.session.cryptua=off";
+fastcgi_param  PHP_VALUE "memory_limit=768M \n max_execution_time=18000";
+
 fastcgi_buffers {{ fastcgi_buffers }};
 fastcgi_buffer_size {{ fastcgi_buffer_size }};
 fastcgi_connect_timeout {{ fastcgi_connect_timeout }};
@@ -15,7 +18,13 @@ try_files $fastcgi_script_name =404;
 # Bypass the fact that try_files resets $fastcgi_path_info
 # see: http://trac.nginx.org/nginx/ticket/321
 set $path_info $fastcgi_path_info;
-fastcgi_param PATH_INFO $path_info;
 
+fastcgi_param PATH_INFO $path_info;
 fastcgi_index index.php;
+fastcgi_param  SSL_OFFLOADED $is_https if_not_empty;
+fastcgi_param  HTTPS         $is_https if_not_empty;
+fastcgi_param  SCRIPT_FILENAME  $realpath_root$fastcgi_script_name;
+
 include fastcgi.conf;
+
+fastcgi_pass   fastcgi_backend;
